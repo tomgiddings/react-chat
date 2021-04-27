@@ -1,4 +1,4 @@
-![Screenshot of chat app](https://github.com/tomgiddings/react-chat/screenshot.png?raw=true)
+![Screenshot of chat app](https://github.com/tomgiddings/react-chat/blob/main/screenshot.png?raw=true)
 
 # React Chat App
 
