@@ -1,6 +1,8 @@
+![Screenshot of chat app](https://github.com/tomgiddings/react-chat/screenshot.png?raw=true)
+
 # React Chat App
 
-Built using React, TypeScript, Material UI and Pusher.
+Built with React, TypeScript, Material UI and Pusher.
 
 ## Prerequisites
 You will need some form of authentication server to provide an endpoint. Luckily, [Pusher have produced an example](https://github.com/pusher/pusher-channels-auth-example/) you can clone and use for testing.
