@@ -49,8 +49,8 @@ export default function UserModal(props:IUserModalProps) {
     const body = (
         <form className={classes.userForm}>
             <FormControl
-            style={modalStyle}
-            className={classes.paper}
+                style={modalStyle}
+                className={classes.paper}
             >
                 <TextField
                     name="user"
@@ -78,9 +78,9 @@ export default function UserModal(props:IUserModalProps) {
     return (
         <React.Fragment>
             <Modal
-            open={open}
-            onClose={handleClose}
-            disableBackdropClick={true}
+                open={open}
+                onClose={handleClose}
+                disableBackdropClick={true}
             >
                 {body}
             </Modal>

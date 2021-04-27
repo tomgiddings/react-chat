@@ -32,6 +32,7 @@ const pusher = new Pusher(env.PUSHER_APP_ID, {
 
 interface IChatProps {
     onSetChannelName: Function,
+    onSetUser: Function,
     classes: any
 }
 
@@ -95,6 +96,7 @@ class Chat extends React.Component<IChatProps, IChatState> {
         this.setState({
             user
         })
+        this.props.onSetUser(user);
     }
 
     displayMessage(message: IMessage) {
@@ -125,37 +127,37 @@ class Chat extends React.Component<IChatProps, IChatState> {
 
                 <AppBar position="fixed" color="primary" className={classes.messageBar}>
                     <Toolbar>
-                        <form className={classes.formMessage}>
-                        <FormControl fullWidth={true}>
-                            <Grid container direction="row" justify="flex-start" alignItems="center" spacing={1}>
-                                <Grid item sm={10}>
-                                    <TextField
-                                        onChange={this.setCurrentMessage.bind(this)}
-                                        autoFocus={true}
-                                        placeholder="Type message..."
-                                        value={this.state.currentMessage}
-                                        variant="outlined"
-                                        margin="dense"
-                                        fullWidth={true}
-                                        InputProps={{
-                                            className: classes.lightField
-                                        }}
-                                    />
+                        <form className={classes.formMessage} noValidate autoComplete="off">
+                            <FormControl fullWidth={true}>
+                                <Grid container direction="row" justify="flex-start" alignItems="center" spacing={1}>
+                                    <Grid item sm={10}>
+                                        <TextField
+                                            onChange={this.setCurrentMessage.bind(this)}
+                                            autoFocus={true}
+                                            placeholder="Type message..."
+                                            value={this.state.currentMessage}
+                                            variant="outlined"
+                                            margin="dense"
+                                            fullWidth={true}
+                                            InputProps={{
+                                                className: classes.lightField
+                                            }}
+                                        />
+                                    </Grid>
+                                    <Grid item sm={2}>
+                                        <Button
+                                            type="submit"
+                                            variant="contained"
+                                            color="primary"
+                                            onClick={this.sendMessage}
+                                            size="large"
+                                            fullWidth={true}
+                                        >
+                                            Send
+                                        </Button>
+                                    </Grid>
                                 </Grid>
-                                <Grid item sm={2}>
-                                    <Button
-                                        type="submit"
-                                        variant="contained"
-                                        color="primary"
-                                        onClick={this.sendMessage}
-                                        size="large"
-                                        fullWidth={true}
-                                    >
-                                        Send
-                                    </Button>
-                                </Grid>
-                            </Grid>
-                        </FormControl>
+                            </FormControl>
                         </form>
                     </Toolbar>
                 </AppBar>
