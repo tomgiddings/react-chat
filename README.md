@@ -14,4 +14,8 @@ You will need some form of authentication server to provide an endpoint. Luckily
 
 This project is licensed under the MIT License. Enjoy!
 
-![Screenshot of chat app](https://github.com/tomgiddings/react-chat/blob/main/screenshot.png?raw=true)
+## Screenshots
+
+![Enter user name screenshot](https://github.com/tomgiddings/react-chat/blob/main/chat-screenshot-1.png?raw=true)
+
+![Chat view screenshot](https://github.com/tomgiddings/react-chat/blob/main/chat-screenshot-2.png?raw=true)
