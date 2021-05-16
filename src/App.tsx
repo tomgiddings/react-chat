@@ -1,4 +1,4 @@
-import React from 'react';
+import { FC, useState, Fragment } from 'react';
 import Chat from './component/Chat';
 
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -8,35 +8,12 @@ import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid'
 import AccountCircle from '@material-ui/icons/AccountCircle';
 
-interface IAppProps {
-}
+const App:FC = () => {
+    const [channelName, setChannelName] = useState('');
+    const [user, setUser] = useState('');
 
-interface IAppState {
-    channelName: string,
-    user: string
-}
-
-class App extends React.Component<IAppProps, IAppState> {
-    constructor(props: IAppProps) {
-        super(props);
-        this.state = {
-            channelName: '',
-            user: ''
-        };
-        this.setChannelName = this.setChannelName.bind(this);
-        this.setUser = this.setUser.bind(this);
-    }
-
-    setChannelName(name:string) {
-        this.setState({ channelName: name });
-    }
-
-    setUser(user:string) {
-        this.setState({ user });
-    }
-
-    render() { return (
-        <React.Fragment>
+    return (
+        <Fragment>
             <CssBaseline />
             <AppBar position="static">
                 <Toolbar>
@@ -47,36 +24,35 @@ class App extends React.Component<IAppProps, IAppState> {
                         wrap="nowrap"
                         container
                     >
-                        <Grid item>
+                        <Grid item zeroMinWidth>
                             <Typography variant="h6">
-                                {this.state.channelName}
+                                {channelName}
                             </Typography>
                         </Grid>
                         <Grid
                         justify="flex-end"
                             spacing={1}
                             container
-                            zeroMinWidth
                         >
-                            {this.state.user.length > 0 ?
-                                <React.Fragment>
+                            {user.length > 0 ?
+                                <Fragment>
                                     <Grid item>
                                         <AccountCircle />
                                     </Grid>
                                     <Grid item>
                                         <Typography variant="subtitle1">
-                                            {this.state.user}
+                                            {user}
                                         </Typography>
                                     </Grid>
-                                </React.Fragment>
+                                </Fragment>
                             :<Grid item>Not Logged In</Grid>}
                         </Grid>
                     </Grid>
                 </Toolbar>
             </AppBar>
-            <Chat onSetChannelName={this.setChannelName} onSetUser={this.setUser} />
-        </React.Fragment>
-    )};
+            <Chat onSetChannelName={setChannelName} onSetUser={setUser} />
+        </Fragment>
+    );
 }
 
 export default App;

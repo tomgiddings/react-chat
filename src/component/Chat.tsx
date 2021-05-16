@@ -1,7 +1,7 @@
-import React from 'react';
+import { FC, useEffect, useState, SyntheticEvent, Fragment } from 'react';
 import env from "react-dotenv";
 import _uniqueId from 'lodash/uniqueId';
-import Pusher from 'pusher-js/with-encryption';
+import Pusher, { Channel } from 'pusher-js/with-encryption';
 import UserModal from './UserModal';
 import Feed from './Feed';
 import Button from '@material-ui/core/Button';
@@ -50,119 +50,105 @@ interface IMessage {
     message: string
 }
 
-class Chat extends React.Component<IChatProps, IChatState> {
-    constructor(props: IChatProps) {
-        super(props);
-        this.state = {
-            channelName: '',
-            messages: [],
-            currentMessage: '',
-            channel: {},
-            user: ''
-        };
-        this.setCurrentMessage = this.setCurrentMessage.bind(this);
-        this.setUser = this.setUser.bind(this);
-        this.sendMessage = this.sendMessage.bind(this);
-    }
+const Chat:FC<IChatProps> = (props: IChatProps, state: IChatState) => {
+    const [channelName, setChannelName] = useState('');
+    const [messages, setMessages] = useState([] as IMessage[]);
+    const [currentMessage, setCurrentMessage] = useState('');
+    const [channel, setChannel] = useState({} as Channel);
+    const [user, setUser] = useState('');
 
-    componentDidMount() {
-        this.joinChannel();
-    }
-
-    joinChannel(name: string='General', user: string='Anonymous') {
-        this.setState({
-            channelName: name,
-            channel: pusher.subscribe('presence-' + name)
-        }, () => this.bindChannel());
-        this.props.onSetChannelName(name);
-    }
-
-    bindChannel() {
-        if(Object.entries(this.state.channel)) {
-            this.state.channel.unbind();
+    useEffect(() => {
+        if(channel.subscribed) {
+            bindChannel();
+        } else {
+            joinChannel();
         }
-        this.state.channel.bind('client-new-message', (data: any, metadata: any) => {
-            this.displayMessage(data);
+    });
+
+    const joinChannel = (name: string='General', user: string='Anonymous') => {
+        setChannelName(name);
+        setChannel(pusher.subscribe('presence-' + name));
+        props.onSetChannelName(channelName);
+    };
+
+    const bindChannel = () => {
+        if(Object.entries(channel)) {
+            channel.unbind();
+        }
+        channel.bind('client-new-message', (data: any, metadata: any) => {
+            displayMessage(data);
         });
+    };
+
+    const displayMessage = (message: IMessage) => {
+        setMessages([...messages, message]);
     }
 
-    setCurrentMessage(e: React.ChangeEvent<{ value: string }>) {
-        this.setState({
-            currentMessage: e.target.value
-        });
-    }
-
-    setUser(user: string) {
-        this.setState({
-            user
-        })
-        this.props.onSetUser(user);
-    }
-
-    displayMessage(message: IMessage) {
-        this.setState((prevState, props) => ({
-            messages: [...prevState.messages, message],
-        }));
-    }
-
-    sendMessage(event: React.SyntheticEvent) {
-        event.preventDefault();
+    const sendMessage = (e: SyntheticEvent) => {
+        e.preventDefault();
         let message = {
-            id: _uniqueId("message-"),
-            user: this.state.user,
-            message: this.state.currentMessage, 
+            id: _uniqueId(`message-${user}-`),
+            user,
+            message: currentMessage,
         };
 
-        this.displayMessage(message)
-        this.state.channel.trigger('client-new-message', message)
-        this.setState({ currentMessage: '' })
+        displayMessage(message);
+        channel.trigger('client-new-message', message);
+        setCurrentMessage('');
     }
 
-    render() {
-        const { classes } = this.props;
-        return (
-            <React.Fragment>
-                <UserModal onChangeUser={(user:string) => this.setUser(user)} />
-                <Feed messages={this.state.messages} />
+    const handleMessageChange = (e: SyntheticEvent) => {
+        setCurrentMessage((e.target as HTMLInputElement).value);
+    }
 
-                <AppBar position="fixed" color="primary" className={classes.messageBar}>
-                    <Toolbar>
-                        <form className={classes.formMessage} noValidate autoComplete="off">
-                            <FormControl fullWidth={true}>
-                                <Grid container direction="row" justify="flex-start" alignItems="center" spacing={1}>
-                                    <Grid item sm={10}>
-                                        <TextField
-                                            onChange={this.setCurrentMessage.bind(this)}
-                                            autoFocus={true}
-                                            placeholder="Type message..."
-                                            value={this.state.currentMessage}
-                                            variant="outlined"
-                                            margin="dense"
-                                            fullWidth={true}
-                                            InputProps={{
-                                                className: classes.lightField
-                                            }}
-                                        />
-                                    </Grid>
-                                    <Grid item sm={2}>
-                                        <Button
-                                            type="submit"
-                                            variant="contained"
-                                            color="primary"
-                                            onClick={this.sendMessage}
-                                            size="large"
-                                            fullWidth={true}
-                                        >
-                                            Send
-                                        </Button>
-                                    </Grid>
+    const handleUserChange = (user: string) => {
+        setUser(user);
+        props.onSetUser(user);
+    }
+
+    const { classes } = props;
+    return (
+        <Fragment>
+            <UserModal onChangeUser={handleUserChange} />
+            <Feed messages={messages} />
+
+            <AppBar position="fixed" color="primary" className={classes.messageBar}>
+                <Toolbar>
+                    <form className={classes.formMessage} noValidate autoComplete="off">
+                        <FormControl fullWidth={true}>
+                            <Grid container direction="row" justify="flex-start" alignItems="center" spacing={1}>
+                                <Grid item sm={10}>
+                                    <TextField
+                                        onChange={handleMessageChange}
+                                        autoFocus={true}
+                                        placeholder="Type message..."
+                                        value={currentMessage}
+                                        variant="outlined"
+                                        margin="dense"
+                                        fullWidth={true}
+                                        InputProps={{
+                                            className: classes.lightField
+                                        }}
+                                    />
                                 </Grid>
-                            </FormControl>
-                        </form>
-                    </Toolbar>
-                </AppBar>
-            </React.Fragment>
-        );
-    }
+                                <Grid item sm={2}>
+                                    <Button
+                                        type="submit"
+                                        variant="contained"
+                                        color="primary"
+                                        onClick={sendMessage}
+                                        size="large"
+                                        fullWidth={true}
+                                    >
+                                        Send
+                                    </Button>
+                                </Grid>
+                            </Grid>
+                        </FormControl>
+                    </form>
+                </Toolbar>
+            </AppBar>
+        </Fragment>
+    );
 };
 export default withStyles(styles)(Chat);
