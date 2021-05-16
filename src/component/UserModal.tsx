@@ -1,4 +1,4 @@
-import React from 'react';
+import { useState, SyntheticEvent, ChangeEvent } from 'react';
 import Modal from '@material-ui/core/Modal';
 import FormControl from '@material-ui/core/FormControl';
 import TextField from '@material-ui/core/TextField';
@@ -33,15 +33,16 @@ interface IUserModalProps {
 
 export default function UserModal(props:IUserModalProps) {
     const classes = useStyles();
-    const [modalStyle] = React.useState(getModalStyle);
-    const [open, setOpen] = React.useState(true);
-    const [isValid, setValid] = React.useState(false);
+    const [modalStyle] = useState(getModalStyle);
+    const [open, setOpen] = useState(true);
+    const [isValid, setValid] = useState(false);
 
-    const handleClose = () => {
+    const handleClose = (e: SyntheticEvent) => {
+        e.preventDefault();
         setOpen(false);
     };
 
-    const onChangeUser = (e: React.ChangeEvent<{ value: string }>) => {
+    const onChangeUser = (e: ChangeEvent<{ value: string }>) => {
         props.onChangeUser(e.target.value)
         setValid(e.target.value.length > 0);
     }
@@ -76,14 +77,12 @@ export default function UserModal(props:IUserModalProps) {
     );
 
     return (
-        <React.Fragment>
-            <Modal
-                open={open}
-                onClose={handleClose}
-                disableBackdropClick={true}
-            >
-                {body}
-            </Modal>
-        </React.Fragment>
+        <Modal
+            open={open}
+            onClose={handleClose}
+            disableBackdropClick={true}
+        >
+            {body}
+        </Modal>
     );
 }

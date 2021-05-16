@@ -48,8 +48,7 @@ export default function Feed(props: IFeedProps) {
             elevation={0}
         >
         <List className={classes.list}>
-            {props.messages.map((body) =>
-            <React.Fragment>
+            {props.messages.map((body) => (
                 <ListItem 
                     button
                     ref={scrollRef}
@@ -60,8 +59,7 @@ export default function Feed(props: IFeedProps) {
                         secondary={body.message}
                     />
                 </ListItem>
-            </React.Fragment>
-            )}
+            ))}
         </List>
     </Paper>
         
